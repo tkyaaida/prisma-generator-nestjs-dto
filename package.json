@@ -1,12 +1,11 @@
 {
-  "name": "@vegardit/prisma-generator-nestjs-dto",
+  "name": "@tkyaaida/prisma-generator-nestjs-dto",
   "description": "Generates DTO and Entity classes from Prisma Schema for NestJS",
-  "version": "1.5.1",
+  "version": "0.0.1",
   "license": "Apache-2.0",
   "author": {
-    "name": "Benjamin Kroeger",
-    "email": "bk@vegardit.com",
-    "url": "https://vegardit.com/"
+    "name": "tkyaaida",
+    "email": "tkyaaida@gmail.com"
   },
   "main": "dist/index.js",
   "keywords": [
@@ -31,7 +30,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/vegardit/prisma-generator-nestjs-dto"
+    "url": "https://github.com/tkyaaida/prisma-generator-nestjs-dto"
   },
   "bin": {
     "prisma-generator-nestjs-dto": "dist/cli.js"
