@@ -1,16 +1,8 @@
-# Project Status: Looking for new maintainers!
-
-This project is looking for maintainers.
-
-We are not using this package anymore ourselves, so we can no longer validate/review/test any incoming PRs anymore and ensure correct functionality.
-
-If you are an experienced open source contributor and are interested in taking over maintenance, please open a GitHub issue and let's discuss how to proceed.
-
-
 # Prisma Generator NestJS DTO
 
-[![Release](https://badge.fury.io/js/%40vegardit%2Fprisma-generator-nestjs-dto.svg)](https://www.npmjs.com/package/@vegardit/prisma-generator-nestjs-dto)
+<!-- [![Release](https://badge.fury.io/js/%40vegardit%2Fprisma-generator-nestjs-dto.svg)](https://www.npmjs.com/package/@vegardit/prisma-generator-nestjs-dto)
 [![License](https://img.shields.io/github/license/vegardit/prisma-generator-nestjs-dto.svg?label=license)](#license)
+ -->
 
 1. [What is it?](#what-is-it)
 1. [Usage](#usage)
@@ -28,7 +20,7 @@ These classes can also be used with the built-in [ValidationPipe](https://docs.n
 ## <a name="usage"></a>Usage?
 
 ```sh
-npm install --save-dev @vegardit/prisma-generator-nestjs-dto
+npm install --save-dev @tkyaaida/prisma-generator-nestjs-dto
 ```
 
 ```prisma
@@ -52,7 +44,7 @@ generator nestjsDto {
 All parameters are optional.
 
 - [`output`]: (default: `"../src/generated/nestjs-dto"`) - output path relative to your `schema.prisma` file
-- [`outputToNestJsResourceStructure`]: (default: `"false"`) - writes `dto`s and `entities` to subfolders aligned with [NestJS CRUD generator](https://docs.nestjs.com/recipes/crud-generator). Resource module name is derived from lower-cased model name in `schema.prisma`
+- [`outputToNestJsResourceStructure`]: (default: `"true"`) - writes `dto`s and `entities` to subfolders aligned with [NestJS CRUD generator](https://docs.nestjs.com/recipes/crud-generator). Resource module name is derived from lower-cased model name in `schema.prisma`
 - [`exportRelationModifierClasses`]: (default: `"true"`) - Should extra classes generated for relationship field operations on DTOs be exported?
 - [`reExport`]: (default: `false`) - Should an index.ts be created for every folder?
 - [`createDtoPrefix`]: (default: `"Create"`) - phrase to prefix every `CreateDTO` class with
@@ -90,7 +82,7 @@ model Post {
 <details>
   <summary>Prisma Schema</summary>
 
-  ```prisma
+```prisma
 
 generator nestjsDto {
 provider = "prisma-generator-nestjs-dto"
@@ -110,25 +102,25 @@ updatedAt DateTime @updatedAt
 updatedBy User? @relation("UpdatedQuestions", fields: [updatedById], references: [id])
 updatedById String? @db.Uuid
 
-    /// @DtoRelationRequired
-    /// @DtoRelationCanConnectOnCreate
-    category   Category? @relation(fields: [categoryId], references: [id])
-    categoryId String?   @db.Uuid
+  /// @DtoRelationRequired
+  /// @DtoRelationCanConnectOnCreate
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?   @db.Uuid
 
-    /// @DtoCreateOptional
-    /// @DtoRelationCanCreateOnCreate
-    /// @DtoRelationCanConnectOnCreate
-    /// @DtoRelationCanCreateOnUpdate
-    /// @DtoRelationCanConnectOnUpdate
-    tags Tag[]
+  /// @DtoCreateOptional
+  /// @DtoRelationCanCreateOnCreate
+  /// @DtoRelationCanConnectOnCreate
+  /// @DtoRelationCanCreateOnUpdate
+  /// @DtoRelationCanConnectOnUpdate
+  tags Tag[]
 
-    title     String
-    content   String
-    responses Response[]
+  title     String
+  content   String
+  responses Response[]
 
 }
 
-````
+```
 
 </details>
 
@@ -140,7 +132,7 @@ updatedById String? @db.Uuid
 export class ConnectQuestionDto {
   id: string;
 }
-````
+```
 
 ```ts
 // src/question/dto/create-question.dto.ts
