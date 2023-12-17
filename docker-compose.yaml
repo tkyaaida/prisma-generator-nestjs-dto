@@ -1,0 +1,12 @@
+services:
+  postgres:
+    image: postgres:16.1
+    container_name: prisma-generator-nestjs-dto
+    environment:
+      POSTGRES_DB: prisma-generator-nestjs-dto
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+    ports:
+      - 65433:5432
+    volumes:
+      - ./data:/var/lib/postgresql/data
