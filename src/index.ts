@@ -9,7 +9,10 @@ import { run } from './generator';
 import type { GeneratorOptions } from '@prisma/generator-helper';
 import type { WriteableFileSpecs, NamingStyle } from './generator/types';
 
-export const stringToBoolean = (input: string, defaultValue = false) => {
+export const optionToBoolean = (
+  input: string | string[] | undefined,
+  defaultValue: boolean,
+): boolean => {
   if (input === 'true') {
     return true;
   }
@@ -20,54 +23,60 @@ export const stringToBoolean = (input: string, defaultValue = false) => {
   return defaultValue;
 };
 
-export const generate = (options: GeneratorOptions) => {
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const output = parseEnvValue(options.generator.output!);
+export const optionToString = (
+  input: string | string[] | undefined,
+  defaultValue: string,
+): string => {
+  if (typeof input === 'string') {
+    return input;
+  }
+  if (Array.isArray(input)) {
+    return input[0];
+  }
 
-  const {
-    connectDtoPrefix = 'Connect',
-    createDtoPrefix = 'Create',
-    updateDtoPrefix = 'Update',
-    dtoSuffix = 'Dto',
-    entityPrefix = '',
-    entitySuffix = '',
-    fileNamingStyle = 'camel',
-  } = options.generator.config;
+  return defaultValue;
+};
 
-  const exportRelationModifierClasses = stringToBoolean(
-    options.generator.config.exportRelationModifierClasses,
-    true,
-  );
-
-  const outputToNestJsResourceStructure = stringToBoolean(
-    options.generator.config.outputToNestJsResourceStructure,
-    // using `true` as default value would be a breaking change
-    false,
-  );
-
-  const reExport = stringToBoolean(
-    options.generator.config.reExport,
-    // using `true` as default value would be a breaking change
-    false,
-  );
-
+export const optionToFileNamingStyle = (
+  input: string | string[] | undefined,
+  defaultValue = 'camel',
+): NamingStyle => {
   const supportedFileNamingStyles = ['kebab', 'camel', 'pascal', 'snake'];
   const isSupportedFileNamingStyle = (style: string): style is NamingStyle =>
     supportedFileNamingStyles.includes(style);
+  const namingStyle = optionToString(input, defaultValue);
 
-  if (!isSupportedFileNamingStyle(fileNamingStyle)) {
+  if (!isSupportedFileNamingStyle(namingStyle)) {
     throw new Error(
-      `'${fileNamingStyle}' is not a valid file naming style. Valid options are ${supportedFileNamingStyles
+      `'${input}' is not a valid file naming style. Valid options are ${supportedFileNamingStyles
         .map((s) => `'${s}'`)
         .join(', ')}.`,
     );
   }
 
-  const results = run({
-    output,
-    dmmf: options.dmmf,
-    exportRelationModifierClasses,
+  return namingStyle;
+};
+
+interface PrismaGeneratorNestjsDtoOptions {
+  outputToNestJsResourceStructure: boolean;
+  exportRelationModifierClasses: boolean;
+  reExport: boolean;
+  connectDtoPrefix: string;
+  createDtoPrefix: string;
+  updateDtoPrefix: string;
+  dtoSuffix: string;
+  entityPrefix: string;
+  entitySuffix: string;
+  fileNamingStyle: NamingStyle; // TODO: make it enum-like
+}
+
+export const parseGeneratorOptions = (
+  options: GeneratorOptions,
+): PrismaGeneratorNestjsDtoOptions => {
+  const {
     outputToNestJsResourceStructure,
+    exportRelationModifierClasses,
+    reExport,
     connectDtoPrefix,
     createDtoPrefix,
     updateDtoPrefix,
@@ -75,11 +84,43 @@ export const generate = (options: GeneratorOptions) => {
     entityPrefix,
     entitySuffix,
     fileNamingStyle,
+  } = options.generator.config;
+
+  const config = {
+    outputToNestJsResourceStructure: optionToBoolean(
+      outputToNestJsResourceStructure,
+      true,
+    ),
+    exportRelationModifierClasses: optionToBoolean(
+      exportRelationModifierClasses,
+      true,
+    ),
+    reExport: optionToBoolean(reExport, false),
+    connectDtoPrefix: optionToString(connectDtoPrefix, 'Connect'),
+    createDtoPrefix: optionToString(createDtoPrefix, 'Create'),
+    updateDtoPrefix: optionToString(updateDtoPrefix, 'Update'),
+    dtoSuffix: optionToString(dtoSuffix, 'Dto'),
+    entityPrefix: optionToString(entityPrefix, ''),
+    entitySuffix: optionToString(entitySuffix, ''),
+    fileNamingStyle: optionToFileNamingStyle(fileNamingStyle),
+  };
+  return config;
+};
+
+export const generate = (options: GeneratorOptions) => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const output = parseEnvValue(options.generator.output!);
+  const config = parseGeneratorOptions(options);
+
+  const results = run({
+    output,
+    dmmf: options.dmmf,
+    ...config,
   });
 
   const indexCollections: Record<string, WriteableFileSpecs> = {};
 
-  if (reExport) {
+  if (config.reExport) {
     results.forEach(({ fileName }) => {
       const dirName = path.dirname(fileName);
 
