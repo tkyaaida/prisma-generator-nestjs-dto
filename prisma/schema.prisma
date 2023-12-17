@@ -3,12 +3,17 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator client {
+  provider = "prisma-client-js"
+  output = "../src/@generated/prisma-client-js"
+}
+
 generator nestjsDto {
   provider                        = "node -r ts-node/register/transpile-only src/cli.ts"
   output                          = "../src/@generated/prisma-generator-nestjs-dto"
-  outputToNestJsResourceStructure = "false"
+  outputToNestJsResourceStructure = "true"
   exportRelationModifierClasses   = "true"
-  reExport                        = "true"
+  reExport                        = "false"
   createDtoPrefix                 = "Create"
   updateDtoPrefix                 = "Update"
   dtoSuffix                       = "Dto"
@@ -52,10 +57,12 @@ model Product {
 
 model Category {
   id      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String
   Product Product[]
 }
 
 model Company {
   id      String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name String
   Product Product[]
 }

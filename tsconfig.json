@@ -8,12 +8,9 @@
     "removeComments": true,
     "rootDir": "src",
     "strict": true,
+    "strictNullChecks": false,
     "target": "es2019",
     "typeRoots": ["./src/@types", "./node_modules/@types"]
   },
-  "exclude": [
-    "node_modules",
-    "coverage",
-    "dist",
-  ]
+  "exclude": ["node_modules", "coverage", "dist"]
 }

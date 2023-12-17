@@ -64,14 +64,14 @@ export const importStatement = (input: ImportStatementParams) => {
       fragments.push(',');
     }
     fragments.push(
-      `{${destruct.flatMap((item) => {
+      `{ ${destruct.flatMap((item) => {
         if (typeof item === 'string') return item;
         return Object.entries(item).map(([key, value]) => `${key} as ${value}`);
-      })}}`,
+      })} }`,
     );
   }
 
-  fragments.push(`from '${from}'`);
+  fragments.push(`from '${from}';`);
 
   return fragments.join(' ');
 };
@@ -147,7 +147,7 @@ export const makeHelpers = ({
     useInputTypes = false,
     forceOptional = false,
   ) =>
-    `${when(
+    `  ${when(
       field.kind === 'enum',
       `@ApiProperty({ enum: ${fieldType(field, useInputTypes)}})\n`,
     )}${field.name}${unless(
@@ -167,7 +167,7 @@ export const makeHelpers = ({
     )}`;
 
   const fieldToEntityProp = (field: ParsedField) =>
-    `${field.name}${unless(field.isRequired, '?')}: ${fieldType(field)} ${when(
+    `  ${field.name}${unless(field.isRequired, '?')}: ${fieldType(field)}${when(
       field.isNullable,
       ' | null',
     )};`;

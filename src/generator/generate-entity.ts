@@ -10,11 +10,9 @@ export const generateEntity = ({
   imports,
   apiExtraModels,
   templateHelpers: t,
-}: GenerateEntityParam) => `
-${t.importStatements(imports)}
-
+}: GenerateEntityParam) => `${t.importStatements(imports)}
 ${t.if(apiExtraModels.length, t.apiExtraModels(apiExtraModels))}
 export class ${t.entityName(model.name)} {
-  ${t.fieldsToEntityProps(fields)}
+${t.fieldsToEntityProps(fields)}
 }
 `;
